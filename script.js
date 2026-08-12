@@ -111,17 +111,19 @@ function buildWeeklySchedule() {
     return;
   }
 
-  // Build one session for each hour of weekly study time across each added subject.
   const sessions = [];
-  subjects.forEach((subject) => {
-    for (let i = 0; i < subject.hours; i += 1) {
-      sessions.push({
-        subject: subject.name,
-        difficulty: subject.difficulty,
-        examDate: subject.examDate,
-      });
-    }
-  });
+  subjects
+    .slice()
+    .sort((a, b) => new Date(a.examDate) - new Date(b.examDate))
+    .forEach((subject) => {
+      for (let i = 0; i < subject.hours; i += 1) {
+        sessions.push({
+          subject: subject.name,
+          difficulty: subject.difficulty,
+          examDate: subject.examDate,
+        });
+      }
+    });
 
   const schedule = weekDays.reduce((acc, day) => {
     acc[day] = [];
@@ -129,8 +131,8 @@ function buildWeeklySchedule() {
   }, {});
 
   sessions.forEach((session, index) => {
-    const dayIndex = index % weekDays.length;
-    const day = weekDays[dayIndex];
+    const dayIndex = Math.floor((index * weekDays.length) / sessions.length);
+    const day = weekDays[Math.min(dayIndex, weekDays.length - 1)];
     schedule[day].push(session);
   });
 
@@ -145,6 +147,16 @@ function renderStudyPlan() {
 
   studyPlanElement.innerHTML = '';
 
+  const summaryCard = document.createElement('div');
+  summaryCard.className = 'card';
+  const studentName = studentNameInput.value.trim() || 'Student';
+  const totalHours = subjects.reduce((sum, subject) => sum + subject.hours, 0);
+  summaryCard.innerHTML = `
+    <h3>Weekly Study Plan for ${studentName}</h3>
+    <p>${totalHours} total study hours assigned across ${weekDays.length} days.</p>
+  `;
+  studyPlanElement.appendChild(summaryCard);
+
   const planGrid = document.createElement('div');
   planGrid.className = 'section-grid';
 
@@ -152,9 +164,22 @@ function renderStudyPlan() {
     const card = document.createElement('div');
     card.className = 'card';
 
+    const dayHeader = document.createElement('div');
+    dayHeader.style.display = 'flex';
+    dayHeader.style.justifyContent = 'space-between';
+    dayHeader.style.alignItems = 'baseline';
+
     const dayTitle = document.createElement('h3');
     dayTitle.textContent = day;
-    card.appendChild(dayTitle);
+    dayTitle.style.margin = '0';
+
+    const countLabel = document.createElement('span');
+    countLabel.style.color = '#4b5563';
+    countLabel.textContent = `${sessions.length} session${sessions.length === 1 ? '' : 's'}`;
+
+    dayHeader.appendChild(dayTitle);
+    dayHeader.appendChild(countLabel);
+    card.appendChild(dayHeader);
 
     if (sessions.length === 0) {
       const emptyNote = document.createElement('p');
@@ -162,13 +187,14 @@ function renderStudyPlan() {
       emptyNote.textContent = 'No study sessions scheduled.';
       card.appendChild(emptyNote);
     } else {
-      const list = document.createElement('ul');
+      const list = document.createElement('ol');
       list.style.paddingInlineStart = '1.2rem';
-      list.style.margin = '0';
+      list.style.margin = '0.75rem 0 0';
 
-      sessions.forEach((session) => {
+      sessions.forEach((session, index) => {
         const item = document.createElement('li');
-        item.textContent = `${session.subject} (${session.difficulty}) - Exam: ${session.examDate}`;
+        item.style.marginBottom = '0.65rem';
+        item.textContent = `${session.subject} - ${session.difficulty} (${session.examDate})`;
         list.appendChild(item);
       });
 
