@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GradePlan</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>GradePlan</h1>
+    <p>Build a simple weekly study plan for your subjects and exam schedule.</p>
+  </header>
+
+  <main>
+    <section aria-labelledby="setup-heading">
+      <h2 id="setup-heading">Study Plan Setup</h2>
+      <form>
+        <div>
+          <label for="student-name">Student Name</label>
+          <input type="text" id="student-name" name="student-name" placeholder="Enter your name">
+        </div>
+
+        <div>
+          <label for="subject-name">Subject</label>
+          <input type="text" id="subject-name" name="subject-name" placeholder="Enter a subject">
+        </div>
+
+        <div>
+          <label for="difficulty">Difficulty</label>
+          <select id="difficulty" name="difficulty">
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="difficult">Difficult</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="weekly-hours">Weekly Study Hours</label>
+          <input type="number" id="weekly-hours" name="weekly-hours" min="1" placeholder="e.g. 5">
+        </div>
+
+        <div>
+          <label for="exam-date">Exam Date</label>
+          <input type="date" id="exam-date" name="exam-date">
+        </div>
+
+        <div>
+          <button type="button">Add Subject</button>
+        </div>
+      </form>
+    </section>
+
+    <section aria-labelledby="subjects-heading">
+      <h2 id="subjects-heading">Added Subjects</h2>
+      <div id="subjects-list" aria-live="polite">
+        <p>No subjects added yet.</p>
+      </div>
+    </section>
+
+    <section aria-labelledby="plan-heading">
+      <h2 id="plan-heading">Study Plan</h2>
+      <div>
+        <button type="button">Generate Study Plan</button>
+      </div>
+      <div id="study-plan">
+        <p>Your generated study plan will appear here.</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
